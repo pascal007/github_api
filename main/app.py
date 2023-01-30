@@ -27,7 +27,6 @@ def create_app():
 
     @app.route("/users/")
     def users():
-        from models import GithubUsers
         page = request.args.get('page')
         per_page = request.args.get('pagination')
         page = int(page) if (page and page.isdigit()) else 1
@@ -39,7 +38,6 @@ def create_app():
 
     @app.route("/api/users/profiles", methods=['GET'])
     def users_profile():
-        from models import GithubUsers
         page = request.args.get('page')
         per_page = request.args.get('pagination')
         page = int(page) if (page and page.isdigit()) else 1
@@ -85,3 +83,27 @@ def create_app():
 
     return app
 
+
+class GithubUsers(db.Model):
+    __tablename__ = "github_users"
+    id = db.Column("id", db.Integer, primary_key=True)
+    username = db.Column("username", db.String(30), unique=True)
+    avatar_url = db.Column("avatar_url", db.String(100))
+    type = db.Column("type", db.String(20))
+    url = db.Column("url", db.String(100), unique=True)
+
+    def __init__(self, id, username, avatar_url, type, url):
+        self.id = id
+        self.username = username
+        self.avatar_url = avatar_url
+        self.type = type
+        self.url = url
+
+    def as_dict(self):
+        return {
+            "id": self.id,
+            "username": self.username,
+            "avatar_url": self.avatar_url,
+            "type": self.type,
+            "url": self.url
+        }
