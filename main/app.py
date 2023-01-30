@@ -2,6 +2,9 @@ import os
 from flask import Flask, render_template, request, jsonify
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
+import redis
+
+r = redis.Redis(host='localhost', port=6379)
 
 
 db_path = 'github_users.sqlite3'
@@ -15,7 +18,18 @@ migrate = Migrate()
 def create_app():
     app = Flask(__name__)
     os.makedirs('database', exist_ok=True)
-    app.config['SQLALCHEMY_DATABASE_URI'] = db_uri
+    try:
+        app.config.from_pyfile('config.cfg')
+
+        if 'SQLALCHEMY_DATABASE_URI' in app.config:
+            # Database is configured
+            app.config['SQLALCHEMY_DATABASE_URI'] = app.config['SQLALCHEMY_DATABASE_URI']
+        else:
+            # Database is not configured
+            app.config['SQLALCHEMY_DATABASE_URI'] = db_uri
+    except FileNotFoundError:
+        app.config['SQLALCHEMY_DATABASE_URI'] = db_uri
+
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
     app.app_context().push()
     db.init_app(app)

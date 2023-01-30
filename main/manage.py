@@ -2,7 +2,7 @@ from flask_migrate import MigrateCommand
 from flask_script import Manager
 import unittest
 
-from app import create_app, db
+from app import create_app
 
 app = create_app()
 manager = Manager(app)
@@ -11,7 +11,7 @@ manager.add_command('db', MigrateCommand)
 
 @manager.command
 def run():
-    app.run(debug=True, host='0.0.0.0', port=5000)
+    app.run(host='0.0.0.0', port=5000)
 
 
 @manager.command

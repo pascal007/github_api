@@ -1,11 +1,9 @@
-import requests
-from app import GithubUsers
 import sys
-
+sys.path.insert(0, '..')
+import requests
+from main.app import GithubUsers, db_uri, create_app
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
-from app import db_uri, create_app
-
 
 create_app().app_context().push()
 
