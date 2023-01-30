@@ -1,8 +1,7 @@
 import unittest
 import sys
 
-from main.app import create_app
-from main.models import GithubUsers
+from app import create_app, GithubUsers
 
 
 class ProjectTest(unittest.TestCase):
