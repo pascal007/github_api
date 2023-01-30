@@ -2,9 +2,6 @@ import os
 from flask import Flask, render_template, request, jsonify
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
-import redis
-
-r = redis.Redis(host="localhost", port=6379)
 
 
 db_path = "github_users.sqlite3"
