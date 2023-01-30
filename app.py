@@ -6,7 +6,7 @@ from flask_migrate import Migrate
 
 db_path = "github_users.sqlite3"
 base_dir = os.path.abspath(os.path.dirname(__file__))
-db_uri = "sqlite:///" + os.path.join(base_dir, "database", "github_users.sqlite")
+db_uri = "sqlite:///" + os.path.join(base_dir, "main", "database", "github_users.sqlite")
 
 db = SQLAlchemy()
 migrate = Migrate()
@@ -14,7 +14,7 @@ migrate = Migrate()
 
 def create_app():
     app = Flask(__name__)
-    os.makedirs("database", exist_ok=True)
+    os.makedirs("main/database", exist_ok=True)
     try:
         app.config.from_pyfile("config.cfg")
 
