@@ -4,8 +4,8 @@ import unittest
 import sys
 
 sys.path.insert(0, "..")
-from main.app import create_app, GithubUsers
-from main.scripts import seed
+from app import create_app, GithubUsers
+from scripts import seed
 
 
 class ProjectTest(unittest.TestCase):
@@ -43,7 +43,7 @@ class ProjectTest(unittest.TestCase):
         self.assertIn(b"Users Page", result.data)
 
     def test_database_exist(self):
-        db_path = "./database/github_users.sqlite"
+        db_path = "main/database/github_users.sqlite"
         self.assertTrue(os.path.exists(db_path))
 
     def test_users_profiles(self):
