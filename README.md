@@ -67,3 +67,12 @@ To deploy the application, follow these steps:
 
 Create a compute service on any of the cloud providers
 
+clone your repo into the created instance
+
+build the docker image and run
+
+install and configure nginx
+
+
+
+
