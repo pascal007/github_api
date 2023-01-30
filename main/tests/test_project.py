@@ -2,6 +2,7 @@ import json
 import os
 import unittest
 import sys
+
 sys.path.insert(0, "..")
 from main.app import create_app, GithubUsers
 from main.scripts import seed
@@ -46,13 +47,10 @@ class ProjectTest(unittest.TestCase):
         self.assertTrue(os.path.exists(db_path))
 
     def test_users_profiles(self):
-        response = self.client.get('/api/users/profiles')
+        response = self.client.get("/api/users/profiles")
         self.assertEqual(response.status_code, 200)
         self.assertTrue(len(json.loads(response.data)) > 0)
 
     def test_seed_script(self):
         result = seed.seed_database()
         self.assertTrue(result)
-
-
-
