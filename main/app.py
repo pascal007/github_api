@@ -2,11 +2,14 @@ import os
 from flask import Flask, render_template, request, jsonify
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
+import redis
+
+r = redis.Redis(host="localhost", port=6379)
 
 
-db_path = 'github_users.sqlite3'
+db_path = "github_users.sqlite3"
 base_dir = os.path.abspath(os.path.dirname(__file__))
-db_uri = 'sqlite:///' + os.path.join(base_dir, 'database', 'github_users.sqlite')
+db_uri = "sqlite:///" + os.path.join(base_dir, "database", "github_users.sqlite")
 
 db = SQLAlchemy()
 migrate = Migrate()
@@ -14,42 +17,55 @@ migrate = Migrate()
 
 def create_app():
     app = Flask(__name__)
-    os.makedirs('database', exist_ok=True)
-    app.config['SQLALCHEMY_DATABASE_URI'] = db_uri
-    app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+    os.makedirs("database", exist_ok=True)
+    try:
+        app.config.from_pyfile("config.cfg")
+
+        if "SQLALCHEMY_DATABASE_URI" in app.config:
+            # Database is configured
+            app.config["SQLALCHEMY_DATABASE_URI"] = app.config[
+                "SQLALCHEMY_DATABASE_URI"
+            ]
+        else:
+            # Database is not configured
+            app.config["SQLALCHEMY_DATABASE_URI"] = db_uri
+    except FileNotFoundError:
+        app.config["SQLALCHEMY_DATABASE_URI"] = db_uri
+
+    app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
     app.app_context().push()
     db.init_app(app)
     migrate.init_app(app, db)
 
     @app.route("/")
     def index():
-        return render_template('index.html')
+        return render_template("index.html")
 
     @app.route("/users/")
     def users():
-        page = request.args.get('page')
-        per_page = request.args.get('pagination')
+        page = request.args.get("page")
+        per_page = request.args.get("pagination")
         page = int(page) if (page and page.isdigit()) else 1
         per_page = int(per_page) if (per_page and per_page.isdigit()) else 25
         users_data = GithubUsers.query.order_by()
         pages = users_data.paginate(page=page, per_page=per_page)
 
-        return render_template('users.html', users_data=users_data, pages=pages)
+        return render_template("users.html", users_data=users_data, pages=pages)
 
-    @app.route("/api/users/profiles", methods=['GET'])
+    @app.route("/api/users/profiles", methods=["GET"])
     def users_profile():
-        page = request.args.get('page')
-        per_page = request.args.get('pagination')
+        page = request.args.get("page")
+        per_page = request.args.get("pagination")
         page = int(page) if (page and page.isdigit()) else 1
         per_page = int(per_page) if (per_page and per_page.isdigit()) else 25
-        order_by = request.args.get('order_by')
-        username = request.args.get('username')
-        primary_key = request.args.get('id')
+        order_by = request.args.get("order_by")
+        username = request.args.get("username")
+        primary_key = request.args.get("id")
 
         match order_by:
-            case 'id':
+            case "id":
                 ordering = GithubUsers.id
-            case 'type':
+            case "type":
                 ordering = GithubUsers.type
             case _:
                 ordering = None
@@ -76,7 +92,7 @@ def create_app():
             "prev_page": results.prev_num,
             "next_page": results.next_num,
             "has_next": results.has_next,
-            "has_prev": results.has_prev
+            "has_prev": results.has_prev,
         }
 
         return jsonify({"data": json_results, "meta": meta})
@@ -105,5 +121,5 @@ class GithubUsers(db.Model):
             "username": self.username,
             "avatar_url": self.avatar_url,
             "type": self.type,
-            "url": self.url
+            "url": self.url,
         }
