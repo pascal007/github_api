@@ -1,2 +1,9 @@
 /venv/
 /.idea/
+identifier.sqlite
+__pycache__/
+main/migrations
+main/database
+
+
+
