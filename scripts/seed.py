@@ -1,7 +1,13 @@
 import sys
+from os import path
+
 import requests
+import os
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
+curr_dir = os.path.dirname(os.path.realpath(__file__))
+parent_dir = os.path.dirname(curr_dir)
+sys.path.append(parent_dir)
 from app import GithubUsers, db_uri, create_app
 
 create_app().app_context().push()
