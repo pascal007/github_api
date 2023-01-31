@@ -40,7 +40,12 @@ Application will start on port 5000
 
 After making changes to your model, you can proceed to run migrations using
 
+`python manage.py db init`
+
 `python manage.py db migrate`
+
+`python manage.py db upgrade`
+
 
 **To run Scripts**
 
@@ -48,7 +53,7 @@ This is used to populate the database with data needed in the app.
 
 You can specify the size of data by entering the --total argument on your terminal
 
-`python ./scripts/seed.py --total [data size]`
+`python scripts/seed.py --total [data size]`
 
 in the argument above, `[data size]` should be an integer value denoting the size of data to be populated
 
